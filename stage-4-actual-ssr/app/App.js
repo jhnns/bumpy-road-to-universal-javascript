@@ -21,3 +21,7 @@ export default class App extends React.Component {
     );
   }
 }
+
+App.defaultProps = {
+  image: null
+};
