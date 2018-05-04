@@ -6,9 +6,9 @@ const startApp = require("../dist/server.js").default;
 const manifest = require("../dist/manifest.json");
 
 async function embedApp() {
-  const { app, state } = await startApp();
+  const { html, state } = await startApp();
 
-  return `<div id="app">${app}</div>
+  return `<div id="app">${html}</div>
 <script>
     window.__PRELOADED_STATE__ = ${serialize(state)};
 </script>`;
@@ -27,17 +27,24 @@ module.exports = () => streamTemplate`<!doctype html>
             right: 0;
             bottom: 0;
             left: 0;
-            padding: 10vh;
+            padding: 50px;
             font-family: Arial, Helvetica, sans-serif;
             font-size: 2vw;
-            text-align: center;
             background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         img {
             max-width: 50vw;
             max-height: 50vh;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 25px;
+        }
+
+        a {
+            color: inherit;
         }
     </style>
     <script defer src="/static/${manifest["client.js"]}"></script>

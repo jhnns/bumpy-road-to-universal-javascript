@@ -1,9 +1,20 @@
 "use strict";
 
 const streamTemplate = require("stream-template");
+const serialize = require("serialize-javascript");
 const startApp = require("../dist/server.js").default;
+const manifest = require("../dist/manifest.json");
 
-module.exports = () => streamTemplate`<!doctype html>
+async function embedApp(app) {
+  const { html, state } = await app;
+
+  return `<div id="app">${html}</div>
+<script>
+    window.__PRELOADED_STATE__ = ${serialize(state)};
+</script>`;
+}
+
+module.exports = app => streamTemplate`<!doctype html>
 <html>
 
 <head>
@@ -36,11 +47,11 @@ module.exports = () => streamTemplate`<!doctype html>
             color: inherit;
         }
     </style>
-    <script defer src="/static/client.js"></script>
+    <script defer src="/static/${manifest["client.js"]}"></script>
 </head>
 
 <body>
-    <div id="app">${startApp()}</div>
+    ${embedApp(app)}
 </body>
 
 </html>`;

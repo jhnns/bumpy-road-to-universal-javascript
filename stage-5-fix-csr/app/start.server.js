@@ -7,7 +7,7 @@ export default async () => {
   const app = <App {...initialProps} />;
 
   return {
-    app: ReactDOMServer.renderToString(app),
-    state: initialProps
+    html: ReactDOMServer.renderToString(app),
+    state: { initialProps }
   };
 };

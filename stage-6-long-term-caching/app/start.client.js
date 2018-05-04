@@ -2,6 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App.js";
 
-const { __PRELOADED_STATE__: initialProps = {} } = window;
+const state = window.__PRELOADED_STATE__;
 
-ReactDOM.hydrate(<App {...initialProps} />, document.getElementById("app"));
+ReactDOM.hydrate(<App {...state.initialProps} />, document.getElementById("app"));

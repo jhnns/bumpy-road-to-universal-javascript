@@ -77,10 +77,10 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 ### [stage-5-fix-csr](stage-5-fix-csr)
 
 1.  You realize that the client-side `App` is initialized with different props
-1.  You refactor `app/start.server` to return the app instance and the preloaded state
+1.  You refactor `app/start.server` to return the rendered HTML and the preloaded state
 1.  You refactor `server/index.html.js` to include the preloaded state in the HTML.
 1.  You put the preloaded state after the rendered HTML for performance reasons
-1.  You refactor `app/start.client` to use the preloaded state and fallback to an empty object if not present
+1.  You refactor `app/start.client` to use the preloaded state
 1.  You realize that you just opened up the possibility for XSS attacks if `__PRELOADED_STATE__` contains user data
 1.  You use [serialize-javascript](https://github.com/yahoo/serialize-javascript) which also serializes `Date` and `RegExp` objects properly
 1.  Realize that everything is working as expected and live a happy life
@@ -99,3 +99,26 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You remember that webpack gives you stats with all the filenames
 1.  You install [webpack-assets-manifest](https://github.com/webdeveric/webpack-assets-manifest)
 1.  You require the `manifest.json` inside `server/index.html.js` and render the correct URL
+
+### [stage-7-routing](stage-7-routing)
+
+1.  On the next day you get a call from the client that they have to pay a lot of money because they don't have an imprint
+1.  The client asks you to add a link to a separate page with the imprint
+1.  You create a separate `app/Imprint.js` with the address
+1.  You realize that you need a router, but you're too lazy to pick one so you decide to use the good old regex router.
+1.  Remember that regexs can be unsafe which means that they can block the event loop on certain input. Don't use unsafe regexs for routing—or use a router.
+1.  The router picks the component based on the incoming request
+1.  You realize that you also need a 404 NotFound component now
+1.  You decide to rename `app/App` to `app/Home`
+1.  You refactor `app/start.server.js` to use the router
+1.  You also need to call `getInitialProps` if present
+1.  Now you realize: since the router requires the request object, you need to pass the request object through all functions
+1.  But you could also refactor the code so that `server/index.html.js` receives a promise of an app instead of creating it—which is what you do
+1.  Then you try to compile the app and webpack says: `Module not found: Error: Can't resolve './App.js'`
+1.  You realize that `app/start.client.js` is still trying to rehydrate the app using the `App` component
+1.  First you think about adding the component to the preloaded state, but then you realize that you can't serialize functions
+1.  So you basically got two options:
+    * Re-route the request on the client although you already have that information
+    * Serialize and deserialize the routing result which means that we have to maintain a map of components
+1.  You decide to use the former one because you don't want to maintain that map
+1.  You test the routing and you're pretty satisfied with it
