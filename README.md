@@ -13,7 +13,7 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You create a React single-page app, finish the project and move on
 1.  One day later the client calls you and says that the image is taking ages to load on their smartphone and that Google is just indexing the loading state of the app.
 1.  You decide to refactor it to a Universal Web Application
-1.  You tell the client that the problem will be fixed in half an hour
+1.  You tell the client that the problem will "probably be fixed in half an hour"
 
 ### [stage-2-naive-universal](stage-2-naive-universal)
 
@@ -69,6 +69,8 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  But now you're getting an error from node-fetch: `Error: only absolute urls are supported`
 1.  You realize that the universal code needs to access our own API. We could move that data loading out of the universal code and treat it as server-only code. But that doesn't scale well when we have multiple pages. Because we wan't our app to also work as a regular single-page app as soon as the hydration finished.
 1.  You fix it by using an absolute URL. Yes, your server is doing an HTTP request against itself.
+1.  That's ok since your API server could be a totally different server
+1.  It could also be fixed with GraphQL and a [SchemaLink](https://www.apollographql.com/docs/link/links/schema.html) instead of a HttpLink
 1.  You realize that the client-side code seems to remove the image again
 1.  You take a look a the console in development. React logs `Warning: Expected server HTML to contain a matching <p> in <main>.`
 
@@ -84,3 +86,16 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  Realize that everything is working as expected and live a happy life
 
 ### [stage-6-long-term-caching](stage-6-long-term-caching)
+
+1.  You get an angry call around midnight from the client that you're not properly using HTTP caching
+1.  You're telling the client that it's just a small configuration and then it'll be done in 5 minutes
+1.  You think: since you're already at it, we can also gzip the assets
+1.  You add the [connect-gzip-static](https://github.com/pirxpilot/connect-gzip-static) middleware
+1.  You add the [compression-webpack-plugin](https://github.com/webpack-contrib/compression-webpack-plugin) to the `web` compilation to compress the output
+1.  You configure webpack to use chunk hashes for the `web` output filenames
+1.  Everything's working fine but then you realize an error in your browser console: `Uncaught SyntaxError: Unexpected token <`
+1.  You realize that the `server/index.html.js` is referencing `<script defer src="/static/client.js"></script>` but the filename has a chunkhash now.
+1.  You're thinking about writing a dynamic require that tries to grep `client.*.js`
+1.  You remember that webpack gives you stats with all the filenames
+1.  You install [webpack-assets-manifest](https://github.com/webdeveric/webpack-assets-manifest)
+1.  You require the `manifest.json` inside `server/index.html.js` and render the correct URL
