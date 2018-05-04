@@ -56,3 +56,14 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  Getting an error from node-fetch: `Error: only absolute urls are supported`
 1.  Realize that the universal code needs to access our own API. We could move that data loading out of the universal code and treat it as server-only code. But that doesn't scale well when we have multiple pages. Because we wan't our app to also work as a regular single-page app as soon as the hydration finished.
 1.  Fix it by using an absolute URL. Yes, our server is doing an HTTP request against itself.
+1.  Realize that the client-side code seems to remove the image again. Take a look a the console in development. React logs `Warning: Expected server HTML to contain a matching <p> in <main>.`
+
+### stage-5-fix-csr
+
+1.  Realize that the client-side `App` is initialized with different props
+1.  Refactor `start.server` to return the app instance and the preloaded state
+1.  Refactor `index.html.js` to include the preloaded state in the HTML. Put the preloaded state after the rendered HTML for performance reasons.
+1.  Refactor `start.client` to use the preloaded state and fallback to an empty object if not present
+1.  Realize that we just opened up the possibility for XSS attacks if `__PRELOADED_STATE__` contains user data
+1.  Use [serialize-javascript](https://github.com/yahoo/serialize-javascript) which also serializes `Date` and `RegExp` objects properly
+1.  Realize that everything is working as expected and live a happy life
