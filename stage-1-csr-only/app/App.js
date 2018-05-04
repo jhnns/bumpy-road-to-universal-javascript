@@ -6,20 +6,20 @@ const RANDOM_FOX_URL = "/api/fox";
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { image: null };
+    this.state = { foxSrc: null };
   }
   async componentWillMount() {
     const response = await fetch(RANDOM_FOX_URL);
-    const { image } = await response.json();
-    this.setState({ image });
+    const { image: foxSrc } = await response.json();
+    this.setState({ foxSrc });
   }
   render() {
-    const { image } = this.state;
+    const { foxSrc } = this.state;
 
     return (
       <main style={{ backgroundImage: `url(${background})` }}>
         <h1>🦊 Random Fox 🦊</h1>
-        {image === null ? <p>Get ready for the fox...</p> : <img src={image} alt="Fox" />}
+        {foxSrc === null ? <p>Get ready for the fox...</p> : <img src={foxSrc} alt="Fox" />}
       </main>
     );
   }
