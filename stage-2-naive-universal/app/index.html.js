@@ -15,6 +15,7 @@ export default () => `<!doctype html>
             left: 0;
             padding: 10vh;
             font-family: Arial, Helvetica, sans-serif;
+            font-size: 2vw;
             text-align: center;
             background-size: cover;
         }
