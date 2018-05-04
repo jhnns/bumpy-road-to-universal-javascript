@@ -1,4 +1,4 @@
-import app from "./start.server";
+import startApp from "./start.server";
 
 export default () => `<!doctype html>
 <html>
@@ -29,7 +29,7 @@ export default () => `<!doctype html>
 </head>
 
 <body>
-    <div id="app">${app()}</div>
+    <div id="app">${startApp()}</div>
     <script src="/static/main.js"></script>
 </body>
 

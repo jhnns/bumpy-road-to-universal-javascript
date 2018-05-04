@@ -1,6 +1,6 @@
 "use strict";
 
-const app = require("../dist/server.js").default;
+const startApp = require("../dist/server.js").default;
 
 module.exports = () => `<!doctype html>
 <html>
@@ -31,7 +31,7 @@ module.exports = () => `<!doctype html>
 </head>
 
 <body>
-    <div id="app">${app()}</div>
+    <div id="app">${startApp()}</div>
     <script src="/static/client.js"></script>
 </body>
 

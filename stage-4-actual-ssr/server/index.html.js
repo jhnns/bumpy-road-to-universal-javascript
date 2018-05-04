@@ -1,7 +1,7 @@
 "use strict";
 
 const streamTemplate = require("stream-template");
-const app = require("../dist/server.js").default;
+const startApp = require("../dist/server.js").default;
 
 module.exports = () => streamTemplate`<!doctype html>
 <html>
@@ -33,7 +33,7 @@ module.exports = () => streamTemplate`<!doctype html>
 </head>
 
 <body>
-    <div id="app">${app()}</div>
+    <div id="app">${startApp()}</div>
 </body>
 
 </html>`;
