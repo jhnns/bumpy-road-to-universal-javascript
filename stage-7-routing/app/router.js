@@ -3,13 +3,11 @@ import Home from "./Home.js";
 import NotFound from "./NotFound.js";
 
 export default req => {
-  let Component = NotFound;
-
   if (/^\/imprint$/.test(req.url)) {
-    Component = Imprint;
+    return Imprint;
   } else if (/^\/$/.test(req.url)) {
-    Component = Home;
+    return Home;
   }
 
-  return Component;
+  return NotFound;
 };
