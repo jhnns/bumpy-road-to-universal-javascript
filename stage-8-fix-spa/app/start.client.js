@@ -4,29 +4,28 @@ import nanohref from "nanohref";
 import router from "./router.js";
 
 const state = window.__PRELOADED_STATE__;
-const req = {
+let currentReq = {
   url: location.pathname
 };
-const Component = router(req);
-let currentReq = req;
+const Component = router(currentReq);
 
 ReactDOM.hydrate(<Component {...state.initialProps} />, document.getElementById("app"));
 
 nanohref(async location => {
-  const req = {
+  const req = (currentReq = {
     url: location.pathname
-  };
+  });
   const Component = router(req);
 
-  currentReq = req;
   ReactDOM.render(<Component />, document.getElementById("app"));
   history.pushState(null, null, req.url);
 
   if ("fetchData" in Component) {
     const newProps = await Component.fetchData();
 
-    if (req === currentReq) {
-      ReactDOM.render(<Component {...newProps} />, document.getElementById("app"));
+    if (req !== currentReq) {
+      return;
     }
+    ReactDOM.render(<Component {...newProps} />, document.getElementById("app"));
   }
 });
