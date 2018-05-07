@@ -102,7 +102,7 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 
 ### [stage-7-routing](stage-7-routing)
 
-1.  On the next day you get a call from the client that they have to pay a lot of money because they don't have an imprint
+1.  On the next day you get a call from the client that they now have a lawsuit because they don't have an imprint
 1.  The client asks you to add a link to a separate page with the imprint
 1.  You create a separate `app/Imprint.js` with the address
 1.  You realize that you need a router, but you're too lazy to pick one so you decide to use the good old regex router.
@@ -119,6 +119,23 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  First you think about adding the component to the preloaded state, but then you realize that you can't serialize functions
 1.  So you basically got two options:
     * Re-route the request on the client although you already have that information
-    * Serialize and deserialize the routing result which means that we have to maintain a map of components
+    * Serialize and deserialize the routing result which means that we have to maintain a map of components because we need to find out which component should be rendered based on the serialized route result.
 1.  You decide to use the former one because you don't want to maintain that map
 1.  You test the routing and you're pretty satisfied with it
+
+### [stage-8-fix-spa](stage-8-fix-spa)
+
+1.  Just as you're about to turn off the computer, you realize that there is a full page reload between page transitions
+1.  You realize that you somehow need to take over the navigation on the client-side as soon as the application is bootstrapped
+1.  You decide that you want to intercept all click events that bubble up the DOM tree to check if there were any clicks inside an anchor tag. You also realize that you need to take account for CTRL, ALT, etc. clicks.
+1.  You decide to use the small helper library [nanohref](https://github.com/choojs/nanohref) from the Choo framework
+1.  Inside the callback from nanohref, you need to:
+    * Create a request object
+    * `history.pushState()` the request url
+    * Map the request to a Component
+    * Call `getInitialProps` on the component if present
+1.  Then you realize: If `getInitialProps` takes very long (in your case this would be the request for fox images), the user won't get any feedback.
+1.  So you decide to do a render first, call `getInitialProps` and then do a render again
+1.  You have to admit that `getInitialProps` is not the right term on the client-side, so you rename it to `fetchData` (which is what React Apollo uses by the way).
+1.  You realize that there is a potential error: If `fetchData` takes long and there has been a new navigation event in the meantime, the rendering might get out of sync.
+1.  You save the current request, so that you can discard the rendering if there has been a newer request.
