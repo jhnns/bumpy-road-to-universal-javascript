@@ -139,3 +139,16 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You have to admit that `getInitialProps` is not the right term on the client-side, so you rename it to `fetchData` (which is what React Apollo uses by the way).
 1.  You realize that there is a potential error: If `fetchData` takes long and there has been a new navigation event in the meantime, the rendering might get out of sync.
 1.  You save the current request, so that you can discard the rendering if there has been a newer request.
+
+### [stage-9-code-splitting](stage-9-code-splitting)
+
+1.  You get an angry call from Sean Larkin in the middle of the night telling you that you should code split your app
+1.  Code-splitting means that only the relevant code for that particular part of your app is loaded. Typical split points in a web app are routes or modals.
+1.  You decide that you want to split the app based on the routes
+1.  You know that webpack will create separate chunks (aka files) if it encounters a part of the app that can be loaded asynchronously on demand
+1.  So instead of importing the files directly in `app/router.js`, you load the modules on demand using the dynamic `import()` syntax.
+1.  You know that `import()` returns the namespace object as also returned by `import * from "..."`. That's why you need to use `await` on the result and then return the default property.
+1.  Since [`import()` is only a stage 3 proposal](https://github.com/tc39/proposal-dynamic-import), you need to tell babel how to handle the new syntax. This is done by installing the corresponding [@babel/plugin-syntax-dynamic-import](https://www.npmjs.com/package/@babel/plugin-syntax-dynamic-import).
+1.  You recognize in webpack's output that it's producing multiple files, called `0.js`, `1.js` and `2.js`. In order to get more readable filenames, you use webpack's magic chunk name comment inside the `import()` expression.
+1.  You also read that [since webpack `4.6.0` you can also add a hint for webpack that the resulting chunk should be prefetched](https://medium.com/webpack/link-rel-prefetch-preload-in-webpack-51a52358f84c).
+1.  You decide to add that for the most most common route `home`
