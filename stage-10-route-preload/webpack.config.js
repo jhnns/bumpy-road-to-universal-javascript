@@ -6,7 +6,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const ManifestPlugin = require("webpack-assets-manifest");
 
 const baseConfig = {
-  mode: "development",
+  mode: "production",
   output: {
     publicPath: "/static/"
   },
