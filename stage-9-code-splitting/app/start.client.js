@@ -4,32 +4,45 @@ import nanohref from "nanohref";
 import router from "./router.js";
 
 const state = window.__PRELOADED_STATE__;
-let currentReq = {
-  url: location.pathname
-};
+let currentReq;
+const req = (currentReq = { url: location.pathname });
 
-router(currentReq).then(Component => {
+history.replaceState(state.initialProps, "", req.url);
+
+router(req).then(Component => {
+  if (req !== currentReq) {
+    return;
+  }
   ReactDOM.hydrate(<Component {...state.initialProps} />, document.getElementById("app"));
+});
 
-  nanohref(async location => {
-    const req = (currentReq = {
-      url: location.pathname
-    });
-    const Component = await router(req);
+nanohref(async location => {
+  const req = (currentReq = { url: location.pathname });
+  const Component = await router(req);
+
+  if (req !== currentReq) {
+    return;
+  }
+  ReactDOM.render(<Component />, document.getElementById("app"));
+  history.pushState(null, "", req.url);
+
+  if ("fetchData" in Component) {
+    const newProps = await Component.fetchData();
 
     if (req !== currentReq) {
       return;
     }
-    ReactDOM.render(<Component />, document.getElementById("app"));
-    history.pushState(null, null, req.url);
+    history.replaceState(newProps, "", req.url);
+    ReactDOM.render(<Component {...newProps} />, document.getElementById("app"));
+  }
+});
 
-    if ("fetchData" in Component) {
-      const newProps = await Component.fetchData();
+window.addEventListener("popstate", async event => {
+  const req = (currentReq = { url: location.pathname });
+  const Component = await router(req);
 
-      if (req !== currentReq) {
-        return;
-      }
-      ReactDOM.render(<Component {...newProps} />, document.getElementById("app"));
-    }
-  });
+  if (req !== currentReq) {
+    return;
+  }
+  ReactDOM.render(<Component {...event.state} />, document.getElementById("app"));
 });
