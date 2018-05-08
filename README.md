@@ -109,7 +109,7 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  Remember that regexs can be unsafe which means that they can block the event loop on certain input. Don't use unsafe regexs for routing—or use a router.
 1.  The router picks the component based on the incoming request
 1.  You realize that you also need a 404 NotFound component now
-1.  You decide to rename `app/App` to `app/Home`
+1.  You decide to rename `app/App.js` to `app/Home.js`
 1.  You refactor `app/start.server.js` to use the router
 1.  You also need to call `getInitialProps` if present
 1.  Now you realize: since the router requires the request object, you need to pass the request object through all functions
@@ -139,6 +139,10 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You have to admit that `getInitialProps` is not the right term on the client-side, so you rename it to `fetchData` (which is what React Apollo uses by the way).
 1.  You realize that there is a potential error: If `fetchData` takes long and there has been a new navigation event in the meantime, the rendering might get out of sync.
 1.  You save the current request, so that you can discard the rendering if there has been a newer request.
+1.  You also realize that the back button is not working
+1.  You know that you have to listen for the `popstate` event
+1.  You don't want to call `fetchData` when the back button has been pressed as it would return a random image again
+1.  So you decide to serialize the render props using `replaceState` and re-use in the `popstate` event
 
 ### [stage-9-code-splitting](stage-9-code-splitting)
 
@@ -150,5 +154,19 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You know that `import()` returns the namespace object as also returned by `import * from "..."`. That's why you need to use `await` on the result and then return the default property.
 1.  Since [`import()` is only a stage 3 proposal](https://github.com/tc39/proposal-dynamic-import), you need to tell babel how to handle the new syntax. This is done by installing the corresponding [@babel/plugin-syntax-dynamic-import](https://www.npmjs.com/package/@babel/plugin-syntax-dynamic-import).
 1.  You recognize in webpack's output that it's producing multiple files, called `0.js`, `1.js` and `2.js`. In order to get more readable filenames, you use webpack's magic chunk name comment inside the `import()` expression.
-1.  You also read that [since webpack `4.6.0` you can also add a hint for webpack that the resulting chunk should be prefetched](https://medium.com/webpack/link-rel-prefetch-preload-in-webpack-51a52358f84c).
-1.  You decide to add that for the most most common route `home`
+1.  Inside `app/start.server.js` and `app/start.client.js` you now need to `await` the router result
+1.  In order to show something to the user while the chunk is loading, you need to add a generic `Loading` component which is rendered when a navigation event happens
+1.  This makes the `app/start.client.js` considerably more complex because you also need to add the request check for all async calls again
+1.  You also notice that this check is also necessary in the `popstate` event since the user could have done a hard reload and then hit the back button
+1.  You realize that colocating data fetching with the displaying component is not ideal because then chunk loading and data fetching needs to be done sequentially
+1.  But putting data fetching into the entry chunk is also not ideal because it makes it bigger
+1.  You decide to live with the current trade-off
+
+### [stage-10-route-preload](stage-10-route-preload)
+
+1.  Looking into the network tab, you realize that the chunk loading happens sequentially because the `import()` call for the route chunk is inside the initial chunk.
+1.  You refactor `app/router.js` so that it also returns the route `routeName` (which should match the `chunkName`).
+1.  You add the `routeName` to the `app` object that is returned by `app/start.server.js`
+1.  You add an `includeRouteChunk` function to `server/index.html.js` which waits until the `routeName` has resolved. Then it adds the script tag for the route chunk.
+1.  You open the network tab and see that the chunks are now loading in parallel
+1.  The fox is happy, the customer is happy, and Sean Larkin is happy: Everyone is happy.
