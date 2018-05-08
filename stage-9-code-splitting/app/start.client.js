@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import nanohref from "nanohref";
 import router from "./router.js";
+import Loading from "./Loading";
 
 const state = window.__PRELOADED_STATE__;
 let currentReq;
@@ -17,6 +18,8 @@ router(req).then(Component => {
 });
 
 nanohref(async location => {
+  ReactDOM.render(<Loading />, document.getElementById("app"));
+
   const req = (currentReq = { url: location.pathname });
   const Component = await router(req);
 
@@ -38,6 +41,8 @@ nanohref(async location => {
 });
 
 window.addEventListener("popstate", async event => {
+  ReactDOM.render(<Loading />, document.getElementById("app"));
+
   const req = (currentReq = { url: location.pathname });
   const Component = await router(req);
 
