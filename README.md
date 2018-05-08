@@ -13,7 +13,6 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You create a React single-page app, finish the project and move on
 1.  One day later the client calls you and says that the image is taking ages to load on their smartphone and that Google is just indexing the loading state of the app.
 1.  You decide to refactor it to a Universal Web Application
-1.  You tell the client that the problem will "probably be fixed in half an hour"
 
 ### [stage-2-naive-universal](stage-2-naive-universal)
 
@@ -31,7 +30,7 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You realize that `componentWillMount()` is called on the server _and_ on the client
 1.  You also realize that the server output is the loading state, not the final state. Rendering is synchronous, fetching is asynchronous.
 1.  You realize that server-side rendering needs to be done in two phases currently: An asychronous data fetching phase and a synchronous rendering phase
-1.  React Fiber's suspense API could help. You [`import { createFetcher } from "future"`](https://blog.usejournal.com/notes-from-dan-abramovs-beyond-react-16-talk-5861a92dcdce) but nothing happens. Then you realize that the API from Dan Abramov's talk is not ready yet.
+1.  React Fiber's suspense API could help, but the API from Dan Abramov's talk is not ready yet.
 1.  You think of two possible solutions:
     * Not using component hooks, but static hooks ([Next.js](https://nextjs.org/) style) or functions entirely decoupled from the component. This is hard.
     * Using `componentDidMount()` (only called on the client) and live with poor server-side rendering.
@@ -44,7 +43,7 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You give the entries names so that webpack produces two different chunks
 1.  You set `libraryTarget` to `"commonjs2"` for the node build
 1.  You use [webpack-node-externals](https://www.npmjs.com/package/webpack-node-externals) to tell webpack that it should not bundle `node_modules` for node. Although that's currently not necessary.
-1.  You wonder where to put the `index.html.js`? Feels like it belongs to the app, but it's not part of any bundle. So you need to use CJS here. You could also move it into the `App` component but as soon as there are third-party scripts that mess with the `<body>` element, React will get confused.
+1.  You wonder where to put the `index.html.js`? Feels like it belongs to the app, but it's not part of any bundle. So you need to use CJS here.
 1.  You put it into `server` for now and rewrite it to CJS
 1.  Import the server bundle. You realize that this is a key point in the application: the server needs to import the server bundle somewhere. That's why you configured it to be `"commonjs2"`.
 1.  You use the `default` export since `app/start.server.js` is a ESM.
@@ -55,7 +54,7 @@ Example repository for my talk "The bumpy road to Universal JavaScript".
 1.  You realize that we need to extract the data loading from the life-cycle hook of the component
 1.  One approach is to create a static async function on the component (like Next.js' `getInitialProps`)
 1.  These data loading functions usually require data from the `req`, such as URL or query parameters. Since we can't depend on env specific objects here, we need to introduce an abstraction. We can use node's request object as blueprint though.
-1.  You Refactor `App` component so that you're using `props` instead of `state`
+1.  You refactor `App` component so that you're using `props` instead of `state`
 1.  You call `getInitialProps` in `app/start.server.js` and then render `App`
 1.  You realize that `server/index.html.js` needs to be async now
 1.  You also realize that we're blocking the whole request just to wait for the app. You could already send out all the static parts like stylesheets or the client bundle.
